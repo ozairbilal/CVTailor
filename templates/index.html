@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Modifier - Optimize Your Resume</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="text-center py-5">
+            <h1 class="display-4"><i class="fas fa-file-alt"></i> CV Modifier</h1>
+            <p class="lead">Optimize your resume to match job descriptions perfectly</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div id="uploadSection" class="card shadow-lg mb-4">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-4">Upload Your CV & Job URL</h3>
+                <form id="cvForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="jobUrl" class="form-label">
+                            <i class="fas fa-link"></i> Job Posting URL
+                        </label>
+                        <input 
+                            type="url" 
+                            class="form-control" 
+                            id="jobUrl" 
+                            name="job_url" 
+                            placeholder="https://www.linkedin.com/jobs/view/..." 
+                            required>
+                        <small class="form-text text-muted">
+                            Enter the URL of the job posting (LinkedIn, company website, etc.)
+                        </small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="cvFile" class="form-label">
+                            <i class="fas fa-file-upload"></i> Your CV/Resume (DOCX)
+                        </label>
+                        <input 
+                            type="file" 
+                            class="form-control" 
+                            id="cvFile" 
+                            name="cv_file" 
+                            accept=".doc,.docx" 
+                            required>
+                        <small class="form-text text-muted">
+                            Only .doc and .docx files are supported (Max 16MB)
+                        </small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100" id="submitBtn">
+                        <i class="fas fa-magic"></i> Analyze & Modify CV
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Section -->
+        <div id="loadingSection" class="text-center py-5" style="display: none;">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4 class="mt-3">Processing your CV...</h4>
+            <p class="text-muted">This may take a few moments</p>
+        </div>
+
+        <!-- Error Section -->
+        <div id="errorSection" class="alert alert-danger" role="alert" style="display: none;">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Error</h4>
+            <p id="errorMessage"></p>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="resetForm()">Try Again</button>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewSection" style="display: none;">
+            <!-- Match Score Card -->
+            <div class="card shadow-lg mb-4 bg-success text-white">
+                <div class="card-body text-center">
+                    <h2 class="display-4 mb-0">
+                        <i class="fas fa-percentage"></i> <span id="matchScore">-</span>
+                    </h2>
+                    <p class="lead mb-0">Match Score</p>
+                </div>
+            </div>
+
+            <!-- Changes Summary -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-list-check"></i> Key Changes Made</h5>
+                </div>
+                <div class="card-body">
+                    <div id="changesSummary" class="changes-summary"></div>
+                </div>
+            </div>
+
+            <!-- Comparison View -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-columns"></i> Side-by-Side Comparison</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Original CV -->
+                        <div class="col-md-6 border-end">
+                            <div class="comparison-header bg-light p-3 border-bottom">
+                                <h6 class="mb-0"><i class="fas fa-file"></i> Original CV</h6>
+                            </div>
+                            <div class="comparison-content p-3">
+                                <pre id="originalCv" class="cv-text"></pre>
+                            </div>
+                        </div>
+                        
+                        <!-- Modified CV -->
+                        <div class="col-md-6">
+                            <div class="comparison-header bg-success text-white p-3 border-bottom">
+                                <h6 class="mb-0"><i class="fas fa-file-circle-check"></i> Modified CV</h6>
+                            </div>
+                            <div class="comparison-content p-3">
+                                <pre id="modifiedCv" class="cv-text modified"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3 mb-5">
+                <button class="btn btn-success btn-lg flex-fill" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download Modified CV
+                </button>
+                <button class="btn btn-outline-secondary btn-lg" onclick="resetForm()">
+                    <i class="fas fa-rotate-left"></i> Start Over
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-muted">
+        <p>&copy; 2026 CV Modifier. Powered by Google Gemini AI.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

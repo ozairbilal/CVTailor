@@ -1,0 +1,221 @@
+/* CV Modifier Styles */
+
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-bg: #f8f9fa;
+    --border-color: #dee2e6;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: 1400px;
+}
+
+header {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header h1 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    font-weight: 600;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    padding: 10px 15px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-lg {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+}
+
+/* Comparison View Styles */
+.comparison-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.comparison-content {
+    max-height: 600px;
+    overflow-y: auto;
+    background-color: #fafafa;
+}
+
+.cv-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    color: #333;
+}
+
+.cv-text.modified {
+    background-color: #e8f5e9;
+}
+
+/* Changes Summary Styles */
+.changes-summary {
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.changes-summary ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.changes-summary li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.changes-summary li:before {
+    content: "✓ ";
+    color: var(--success-color);
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.changes-summary li:last-child {
+    border-bottom: none;
+}
+
+/* Loading Animation */
+.spinner-border {
+    animation: spinner-border 0.75s linear infinite;
+}
+
+/* Match Score Styling */
+#matchScore {
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comparison-content {
+        max-height: 400px;
+    }
+    
+    .cv-text {
+        font-size: 0.8rem;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Scrollbar Styling */
+.comparison-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.comparison-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.comparison-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.comparison-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Footer */
+footer {
+    background-color: rgba(255, 255, 255, 0.9);
+    margin-top: 50px;
+    border-radius: 15px;
+}
+
+/* Animation for sections */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Highlight differences (could be enhanced with a diff library) */
+.diff-added {
+    background-color: #c8e6c9;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.diff-removed {
+    background-color: #ffcdd2;
+    padding: 2px 4px;
+    border-radius: 3px;
+    text-decoration: line-through;
+}
+
+.diff-changed {
+    background-color: #fff9c4;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
