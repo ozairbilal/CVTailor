@@ -1,4 +1,4 @@
-// CV Modifier - Main JavaScript
+// CVTailor - Main JavaScript
 
 let currentSessionId = null;
 

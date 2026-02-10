@@ -1,5 +1,5 @@
 """
-Flask application for CV Modifier
+Flask application for CVTailor
 """
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
@@ -317,7 +317,7 @@ def download(session_id):
 @app.route('/health')
 def health():
     """Health check endpoint"""
-    return jsonify({'status': 'healthy', 'message': 'CV Modifier is running'})
+    return jsonify({'status': 'healthy', 'message': 'CVTailor is running'})
 
 @app.errorhandler(413)
 def too_large(e):

@@ -1,4 +1,4 @@
-# CV Modifier - AI-Powered Resume Optimizer
+# CVTailor - AI-Powered Resume Optimizer
 
 A minimal viable web application that optimizes your CV/resume to match job descriptions using Google Gemini AI. Upload your CV and provide a job posting URL - the app will analyze, modify, and enhance your resume to maximize your match score while preserving your original formatting.
 
@@ -25,7 +25,7 @@ A minimal viable web application that optimizes your CV/resume to match job desc
 
 1. **Navigate to the project directory**:
    ```bash
-   cd "CV modifier"
+   cd CVTailor
    ```
 
 2. **Create a virtual environment**:
@@ -80,7 +80,7 @@ A minimal viable web application that optimizes your CV/resume to match job desc
 ## 🏗️ Project Structure
 
 ```
-cv-modifier/
+CVTailor/
 ├── app.py                  # Flask application (main entry point)
 ├── requirements.txt        # Python dependencies
 ├── .env                    # Environment variables (create from .env.example)

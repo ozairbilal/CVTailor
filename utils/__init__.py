@@ -1,1 +1,1 @@
-# Utils package for CV Modifier
+# Utils package for CVTailor

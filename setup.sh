@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# CV Modifier Setup Script
+# CVTailor Setup Script
 
 echo "=========================================="
-echo "CV Modifier - Setup Script"
+echo "CVTailor - Setup Script"
 echo "=========================================="
 echo ""
 

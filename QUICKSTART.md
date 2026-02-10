@@ -1,4 +1,4 @@
-# Quick Start Guide
+# CVTailor - Quick Start Guide
 
 ## Get Your Gemini API Key First! 🔑
 

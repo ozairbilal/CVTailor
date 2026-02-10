@@ -1,6 +1,6 @@
 # Installation Steps - Follow These Exactly
 
-Complete step-by-step installation guide for the CV Modifier application.
+Complete step-by-step installation guide for the CVTailor application.
 
 ## Prerequisites
 
@@ -114,7 +114,7 @@ You should see:
 
 Go to: **http://localhost:5000**
 
-You should see the CV Modifier web interface!
+You should see the CVTailor web interface!
 
 ---
 
@@ -143,7 +143,7 @@ python app.py
 ### Virtual environment not activating?
 Make sure you're in the correct directory:
 ```bash
-cd "/Users/sheikhozairbilal/Desktop/Personal/Personal Projects/CV modifier"
+cd "/Users/sheikhozairbilal/Desktop/Personal/Personal Projects/CVTailor"
 ```
 
 ### Still getting "externally-managed-environment" error?
