@@ -19,9 +19,40 @@
         <!-- Upload Section -->
         <div id="uploadSection" class="card shadow-lg mb-4">
             <div class="card-body p-4">
-                <h3 class="card-title mb-4">Upload Your CV & Job URL</h3>
+                <h3 class="card-title mb-4">Upload Your CV & Job Details</h3>
                 <form id="cvForm" enctype="multipart/form-data">
-                    <div class="mb-3">
+                    <!-- Job Input Method Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-briefcase"></i> How would you like to provide the job details?
+                        </label>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="jobInputMethod" 
+                                id="jobUrlMethod" 
+                                value="url" 
+                                checked>
+                            <label class="form-check-label" for="jobUrlMethod">
+                                <i class="fas fa-link"></i> Job Posting URL
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="jobInputMethod" 
+                                id="jobTextMethod" 
+                                value="text">
+                            <label class="form-check-label" for="jobTextMethod">
+                                <i class="fas fa-paste"></i> Paste Job Description
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Job URL Input -->
+                    <div class="mb-3" id="jobUrlSection">
                         <label for="jobUrl" class="form-label">
                             <i class="fas fa-link"></i> Job Posting URL
                         </label>
@@ -30,15 +61,31 @@
                             class="form-control" 
                             id="jobUrl" 
                             name="job_url" 
-                            placeholder="https://www.linkedin.com/jobs/view/..." 
-                            required>
+                            placeholder="https://www.linkedin.com/jobs/view/...">
                         <small class="form-text text-muted">
                             Enter the URL of the job posting (LinkedIn, company website, etc.)
                         </small>
                     </div>
+
+                    <!-- Job Description Text Input -->
+                    <div class="mb-3" id="jobTextSection" style="display: none;">
+                        <label for="jobText" class="form-label">
+                            <i class="fas fa-file-text"></i> Job Description
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="jobText" 
+                            name="job_text" 
+                            rows="8" 
+                            placeholder="Paste the complete job description here..."></textarea>
+                        <small class="form-text text-muted">
+                            Paste the full job description including requirements, responsibilities, etc.
+                        </small>
+                    </div>
                     
+                    <!-- CV Upload -->
                     <div class="mb-4">
-                        <label for="cvFile" class="form-label">
+                        <label for="cvFile" class="form-label fw-bold">
                             <i class="fas fa-file-upload"></i> Your CV/Resume (DOCX)
                         </label>
                         <input 

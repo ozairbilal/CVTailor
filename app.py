@@ -65,19 +65,20 @@ def process():
         if 'cv_file' not in request.files:
             return jsonify({'error': 'No file uploaded'}), 400
         
-        job_url = request.form.get('job_url', '').strip()
-        if not job_url:
-            return jsonify({'error': 'Job URL is required'}), 400
-        
-        if not validate_url(job_url):
-            return jsonify({'error': 'Invalid URL format'}), 400
-        
         file = request.files['cv_file']
         if file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
         
         if not allowed_file(file.filename):
             return jsonify({'error': 'Only .docx and .doc files are allowed'}), 400
+        
+        # Get job description either from URL or direct text
+        job_url = request.form.get('job_url', '').strip()
+        job_text = request.form.get('job_text', '').strip()
+        
+        # Validate that at least one is provided
+        if not job_url and not job_text:
+            return jsonify({'error': 'Please provide either a job URL or paste the job description'}), 400
         
         # Generate unique session ID
         session_id = str(uuid.uuid4())
@@ -87,10 +88,23 @@ def process():
         original_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{session_id}_{filename}")
         file.save(original_path)
         
-        # Extract job description
-        job_description = extract_job_description(job_url)
-        if job_description.startswith('Error') or job_description.startswith('Unable'):
-            return jsonify({'error': job_description}), 400
+        # Get job description
+        job_description = None
+        
+        # Priority: Use pasted text if provided, otherwise scrape URL
+        if job_text:
+            job_description = job_text
+        elif job_url:
+            if not validate_url(job_url):
+                return jsonify({'error': 'Invalid URL format'}), 400
+            
+            job_description = extract_job_description(job_url)
+            if job_description.startswith('Error') or job_description.startswith('Unable'):
+                return jsonify({'error': job_description}), 400
+        
+        # Ensure we have a job description
+        if not job_description or len(job_description.strip()) < 50:
+            return jsonify({'error': 'Job description is too short or empty. Please provide more details.'}), 400
         
         # Read CV content
         cv_text = read_docx(original_path)
@@ -325,4 +339,4 @@ def too_large(e):
     return jsonify({'error': 'File too large. Maximum size is 16MB.'}), 413
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)

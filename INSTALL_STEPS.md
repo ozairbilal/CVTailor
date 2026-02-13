@@ -106,13 +106,13 @@ python app.py
 
 You should see:
 ```
- * Running on http://127.0.0.1:5000
+ * Running on http://127.0.0.1:5001
  * Debug mode: on
 ```
 
 ## Step 7: Open in Browser
 
-Go to: **http://localhost:5000**
+Go to: **http://localhost:5001**
 
 You should see the CVTailor web interface!
 
@@ -135,7 +135,7 @@ nano .env
 python app.py
 
 # 5. Open browser
-# Navigate to http://localhost:5000
+# Navigate to http://localhost:5001
 ```
 
 ## Troubleshooting

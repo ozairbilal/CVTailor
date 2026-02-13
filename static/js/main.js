@@ -9,7 +9,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const downloadBtn = document.getElementById('downloadBtn');
     downloadBtn.addEventListener('click', handleDownload);
+    
+    // Handle job input method toggle
+    const jobUrlMethod = document.getElementById('jobUrlMethod');
+    const jobTextMethod = document.getElementById('jobTextMethod');
+    
+    jobUrlMethod.addEventListener('change', toggleJobInputMethod);
+    jobTextMethod.addEventListener('change', toggleJobInputMethod);
+    
+    // Initialize with URL method
+    toggleJobInputMethod();
 });
+
+// Toggle between URL and text input
+function toggleJobInputMethod() {
+    const jobUrlMethod = document.getElementById('jobUrlMethod');
+    const jobUrlSection = document.getElementById('jobUrlSection');
+    const jobTextSection = document.getElementById('jobTextSection');
+    const jobUrlInput = document.getElementById('jobUrl');
+    const jobTextInput = document.getElementById('jobText');
+    
+    if (jobUrlMethod.checked) {
+        // Show URL input, hide text input
+        jobUrlSection.style.display = 'block';
+        jobTextSection.style.display = 'none';
+        jobUrlInput.required = true;
+        jobTextInput.required = false;
+        jobTextInput.value = ''; // Clear text input
+    } else {
+        // Show text input, hide URL input
+        jobUrlSection.style.display = 'none';
+        jobTextSection.style.display = 'block';
+        jobUrlInput.required = false;
+        jobTextInput.required = true;
+        jobUrlInput.value = ''; // Clear URL input
+    }
+}
 
 // Handle form submission
 async function handleFormSubmit(e) {
@@ -17,6 +52,15 @@ async function handleFormSubmit(e) {
     
     // Get form data
     const formData = new FormData(e.target);
+    
+    // Validate job input
+    const jobUrl = formData.get('job_url');
+    const jobText = formData.get('job_text');
+    
+    if (!jobUrl && !jobText) {
+        showError('Please provide either a job URL or paste the job description.');
+        return;
+    }
     
     // Show loading, hide other sections
     showSection('loadingSection');

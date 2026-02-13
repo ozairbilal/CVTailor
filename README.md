@@ -63,7 +63,7 @@ A minimal viable web application that optimizes your CV/resume to match job desc
 
 6. **Open your browser** and navigate to:
    ```
-   http://localhost:5000
+   http://localhost:5001
    ```
 
 ## 📖 How to Use
