@@ -3,6 +3,7 @@ Google Gemini AI service for CV modification
 """
 import google.generativeai as genai
 import os
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,41 +11,109 @@ load_dotenv()
 # Configure Gemini API
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
-def get_available_model():
+# Track which models have hit quota limits (simple in-memory cache)
+# Format: {model_name: timestamp_when_quota_hit}
+quota_exceeded_models = {}
+
+def is_quota_error(error_message):
     """
-    Get the first available model that supports content generation
+    Check if an error is related to quota/rate limits
+    """
+    error_str = str(error_message).lower()
+    quota_keywords = [
+        'quota',
+        'rate limit',
+        'exceeded',
+        'too many requests',
+        '429',
+        'resource exhausted'
+    ]
+    return any(keyword in error_str for keyword in quota_keywords)
+
+def is_model_available(model_name):
+    """
+    Check if a model is available (not in quota exceeded state)
+    Returns True if model can be tried
+    """
+    if model_name not in quota_exceeded_models:
+        return True
+    
+    # Check if enough time has passed since quota was hit (5 minutes)
+    time_since_quota = time.time() - quota_exceeded_models[model_name]
+    if time_since_quota > 300:  # 5 minutes
+        # Remove from quota list and try again
+        del quota_exceeded_models[model_name]
+        return True
+    
+    return False
+
+def get_available_models():
+    """
+    Get all available models that support content generation
+    Returns list of model names, excluding those with quota issues
     """
     try:
         models = genai.list_models()
+        available = []
         for model in models:
             if 'generateContent' in model.supported_generation_methods:
-                return model.name
-        return None
+                if is_model_available(model.name):
+                    available.append(model.name)
+                    print(f"✓ Available model: {model.name}")
+                else:
+                    print(f"⏭ Skipping {model.name} (quota exceeded recently)")
+        
+        if not available:
+            print("⚠ No models available - all may have quota issues")
+        
+        return available
     except Exception as e:
         print(f"Error listing models: {e}")
-        return None
+        return []
 
 def modify_cv_with_gemini(cv_text, job_description):
     """
     Use Gemini AI to modify CV based on job description
     Returns: dict with modified_cv, match_score, and changes_summary
+    
+    Implements intelligent model fallback:
+    - Tries multiple models in order of preference
+    - Skips models that recently hit quota limits
+    - Detects quota errors and rotates to next model
     """
-    # Try different model names in order of preference
+    # Try different model names in order of preference (updated for 2025/2026)
+    # Using current stable models as of January 2026
     model_names_to_try = [
-        'gemini-1.5-flash-latest',
-        'gemini-1.5-flash',
-        'gemini-1.5-pro-latest',
-        'gemini-1.5-pro',
-        'gemini-pro',
-        'models/gemini-1.5-flash-latest',
-        'models/gemini-1.5-flash',
-        'models/gemini-pro'
+        'gemini-2.5-flash',              # Stable - best price-performance
+        'gemini-2.5-flash-lite',         # Fastest and most cost-efficient
+        'gemini-2.5-pro',                # Advanced thinking model
+        'gemini-3-flash-preview',        # Latest preview flash model
+        'gemini-3-pro-preview',          # Most powerful (may have rate limits)
+        'gemini-2.0-flash',              # Deprecated but still available until March 2026
     ]
     
+    # Filter out models that have recently hit quota
+    model_names_to_try = [m for m in model_names_to_try if is_model_available(m)]
+    
     # Also try to get available models from API
-    available_model = get_available_model()
-    if available_model:
-        model_names_to_try.insert(0, available_model)
+    print("\n" + "="*60)
+    print("🔍 Checking available Gemini models...")
+    print("="*60)
+    api_models = get_available_models()
+    
+    # Add API models to the front if not already in list
+    for model in api_models:
+        model_short = model.replace('models/', '')
+        if model_short not in model_names_to_try:
+            model_names_to_try.insert(0, model_short)
+    
+    if not model_names_to_try:
+        raise Exception("❌ All models have hit quota limits. Please wait a few minutes and try again, or upgrade your API plan.")
+    
+    print(f"\n📋 Will try {len(model_names_to_try)} model(s) in order:")
+    for i, model in enumerate(model_names_to_try, 1):
+        print(f"  {i}. {model}")
+    print()
     
     prompt = f"""You are an expert CV/resume optimizer. Your task is to MODIFY the existing CV (not create a new one) to better match the job description while maintaining the original structure and truthfulness.
 
@@ -93,14 +162,19 @@ CHANGES_SUMMARY:
 """
     
     last_error = None
+    models_tried = 0
     
     # Try each model until one works
     for model_name in model_names_to_try:
+        models_tried += 1
         try:
+            print(f"🔄 Attempt {models_tried}/{len(model_names_to_try)}: Trying model '{model_name}'...")
             model = genai.GenerativeModel(model_name)
             response = model.generate_content(prompt)
             
             # If we get here, the model worked!
+            print(f"✅ SUCCESS! Used model: {model_name}")
+            print("="*60 + "\n")
             response_text = response.text
             
             # Extract sections
@@ -168,22 +242,63 @@ CHANGES_SUMMARY:
             
         except Exception as e:
             last_error = str(e)
-            continue  # Try next model
+            error_preview = str(e)[:150]
+            
+            # Check if this is a quota error
+            if is_quota_error(str(e)):
+                print(f"⚠️  QUOTA EXCEEDED for {model_name}")
+                print(f"   Error: {error_preview}...")
+                # Mark this model as having quota issues
+                quota_exceeded_models[model_name] = time.time()
+                print(f"   ⏭  Rotating to next available model...")
+            else:
+                print(f"❌ Model {model_name} failed: {error_preview}...")
+            
+            # Try next model
+            if models_tried < len(model_names_to_try):
+                print()  # Add spacing between attempts
+            continue
     
     # If we got here, no model worked
-    raise Exception(f"Unable to find working Gemini model. Last error: {last_error}. Please check your API key at https://makersuite.google.com/app/apikey")
+    print("\n" + "="*60)
+    print("❌ ALL MODELS FAILED")
+    print("="*60)
+    
+    if quota_exceeded_models:
+        print(f"\n⚠️  {len(quota_exceeded_models)} model(s) hit quota limits:")
+        for model in quota_exceeded_models:
+            print(f"   • {model}")
+        print("\n💡 Solutions:")
+        print("   1. Wait 5-10 minutes for quotas to reset")
+        print("   2. Get a new API key at: https://aistudio.google.com/app/apikey")
+        print("   3. Upgrade to a paid plan for higher limits")
+    
+    error_msg = f"Unable to find working Gemini model after trying {models_tried} models. Last error: {last_error}"
+    print(f"\n{error_msg}\n")
+    raise Exception(error_msg)
 
 def test_gemini_connection():
     """
     Test if Gemini API is properly configured
+    Tests all available models and returns the first working one
     """
-    model_name = get_available_model()
-    if not model_name:
+    available_models = get_available_models()
+    
+    if not available_models:
         return False, "Could not find any available models"
     
-    try:
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content("Say 'Connection successful' if you can read this.")
-        return True, f"Connection successful using {model_name}"
-    except Exception as e:
-        return False, str(e)
+    for model_name in available_models:
+        try:
+            print(f"Testing {model_name}...")
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content("Say 'Connection successful' if you can read this.")
+            return True, f"✅ Connection successful using {model_name}"
+        except Exception as e:
+            if is_quota_error(str(e)):
+                quota_exceeded_models[model_name] = time.time()
+                print(f"⚠️  {model_name} has quota issues, trying next...")
+            else:
+                print(f"❌ {model_name} failed: {str(e)[:100]}")
+            continue
+    
+    return False, "All models failed. Check API key and quota limits."

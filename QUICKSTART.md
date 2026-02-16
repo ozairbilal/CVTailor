@@ -75,7 +75,7 @@ source venv/bin/activate
 python app.py
 ```
 
-Open browser: **http://localhost:5001**
+Open browser: **http://localhost:5000**
 
 ## Usage
 
