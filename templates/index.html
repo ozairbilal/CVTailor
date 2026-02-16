@@ -125,13 +125,51 @@
 
         <!-- Preview Section -->
         <div id="previewSection" style="display: none;">
-            <!-- Match Score Card -->
-            <div class="card shadow-lg mb-4 bg-success text-white">
-                <div class="card-body text-center">
-                    <h2 class="display-4 mb-0">
-                        <i class="fas fa-percentage"></i> <span id="matchScore">-</span>
-                    </h2>
-                    <p class="lead mb-0">Match Score</p>
+            <!-- Match Score Card - Before/After -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-center mb-4">
+                        <i class="fas fa-chart-line"></i> Match Score Analysis
+                    </h5>
+                    <div class="row text-center">
+                        <!-- Before Score -->
+                        <div class="col-md-5">
+                            <div class="p-3 rounded" style="background-color: #f8f9fa;">
+                                <h6 class="text-muted mb-2">
+                                    <i class="fas fa-file"></i> Before
+                                </h6>
+                                <h2 class="display-5 mb-0" style="color: #6c757d;">
+                                    <span id="originalMatchScore">-</span>%
+                                </h2>
+                                <small class="text-muted">Original CV</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Arrow & Improvement -->
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <i class="fas fa-arrow-right fa-2x text-primary"></i>
+                                <div class="mt-2">
+                                    <span id="improvementBadge" class="badge bg-success" style="font-size: 1rem;">
+                                        <i class="fas fa-arrow-up"></i> <span id="improvement">-</span>%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- After Score -->
+                        <div class="col-md-5">
+                            <div class="p-3 rounded bg-success text-white">
+                                <h6 class="mb-2">
+                                    <i class="fas fa-file-circle-check"></i> After
+                                </h6>
+                                <h2 class="display-5 mb-0">
+                                    <span id="modifiedMatchScore">-</span>%
+                                </h2>
+                                <small>Modified CV</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

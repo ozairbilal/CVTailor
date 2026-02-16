@@ -79,11 +79,14 @@ EXAMPLE of what NOT to do:
 
 Please provide your response in the following format:
 
+ORIGINAL_MATCH_SCORE:
+[A percentage from 0-100 indicating how well the ORIGINAL CV matches the job description]
+
 MODIFIED_CV:
 [The MODIFIED version of the original CV with enhanced descriptions]
 
-MATCH_SCORE:
-[A percentage from 0-100 indicating how well the modified CV matches the job description]
+MODIFIED_MATCH_SCORE:
+[A percentage from 0-100 indicating how well the MODIFIED CV matches the job description]
 
 CHANGES_SUMMARY:
 [A bullet-point list of the specific changes you made to experience descriptions and why they improve the match]
@@ -102,35 +105,64 @@ CHANGES_SUMMARY:
             
             # Extract sections
             modified_cv = ""
-            match_score = "N/A"
+            original_match_score = "N/A"
+            modified_match_score = "N/A"
             changes_summary = ""
             
-            if "MODIFIED_CV:" in response_text:
-                parts = response_text.split("MODIFIED_CV:")[1]
-                if "MATCH_SCORE:" in parts:
-                    modified_cv = parts.split("MATCH_SCORE:")[0].strip()
-                    remaining = parts.split("MATCH_SCORE:")[1]
-                    if "CHANGES_SUMMARY:" in remaining:
-                        match_score = remaining.split("CHANGES_SUMMARY:")[0].strip()
-                        changes_summary = remaining.split("CHANGES_SUMMARY:")[1].strip()
+            # Parse ORIGINAL_MATCH_SCORE
+            if "ORIGINAL_MATCH_SCORE:" in response_text:
+                parts = response_text.split("ORIGINAL_MATCH_SCORE:")[1]
+                if "MODIFIED_CV:" in parts:
+                    original_match_score = parts.split("MODIFIED_CV:")[0].strip()
+                    remaining = parts.split("MODIFIED_CV:")[1]
+                    
+                    # Parse MODIFIED_CV
+                    if "MODIFIED_MATCH_SCORE:" in remaining:
+                        modified_cv = remaining.split("MODIFIED_MATCH_SCORE:")[0].strip()
+                        remaining2 = remaining.split("MODIFIED_MATCH_SCORE:")[1]
+                        
+                        # Parse MODIFIED_MATCH_SCORE
+                        if "CHANGES_SUMMARY:" in remaining2:
+                            modified_match_score = remaining2.split("CHANGES_SUMMARY:")[0].strip()
+                            changes_summary = remaining2.split("CHANGES_SUMMARY:")[1].strip()
+                        else:
+                            modified_match_score = remaining2.strip()
                     else:
-                        match_score = remaining.strip()
-                else:
-                    modified_cv = parts.strip()
+                        modified_cv = remaining.strip()
             else:
-                # If format not followed, use the entire response as modified CV
-                modified_cv = response_text
+                # Fallback to old format for compatibility
+                if "MODIFIED_CV:" in response_text:
+                    parts = response_text.split("MODIFIED_CV:")[1]
+                    if "MATCH_SCORE:" in parts:
+                        modified_cv = parts.split("MATCH_SCORE:")[0].strip()
+                        remaining = parts.split("MATCH_SCORE:")[1]
+                        if "CHANGES_SUMMARY:" in remaining:
+                            modified_match_score = remaining.split("CHANGES_SUMMARY:")[0].strip()
+                            changes_summary = remaining.split("CHANGES_SUMMARY:")[1].strip()
+                        else:
+                            modified_match_score = remaining.strip()
+                    else:
+                        modified_cv = parts.strip()
+                else:
+                    # If format not followed, use the entire response as modified CV
+                    modified_cv = response_text
             
-            # Clean up match score to extract just the number
-            if match_score and match_score != "N/A":
-                import re
-                numbers = re.findall(r'\d+', match_score)
+            # Clean up match scores to extract just the numbers
+            import re
+            if original_match_score and original_match_score != "N/A":
+                numbers = re.findall(r'\d+', original_match_score)
                 if numbers:
-                    match_score = numbers[0] + "%"
+                    original_match_score = numbers[0]
+            
+            if modified_match_score and modified_match_score != "N/A":
+                numbers = re.findall(r'\d+', modified_match_score)
+                if numbers:
+                    modified_match_score = numbers[0]
             
             return {
                 'modified_cv': modified_cv,
-                'match_score': match_score,
+                'original_match_score': original_match_score,
+                'modified_match_score': modified_match_score,
                 'changes_summary': changes_summary if changes_summary else "CV optimized for job requirements with enhanced keywords and relevant experience highlighting."
             }
             

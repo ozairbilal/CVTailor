@@ -97,8 +97,31 @@ function displayPreview(data) {
     // Hide loading
     hideSection('loadingSection');
     
-    // Set match score
-    document.getElementById('matchScore').textContent = data.match_score || 'N/A';
+    // Set match scores
+    const originalScore = parseFloat(data.original_match_score) || 0;
+    const modifiedScore = parseFloat(data.modified_match_score) || parseFloat(data.match_score) || 0;
+    const improvement = modifiedScore - originalScore;
+    
+    document.getElementById('originalMatchScore').textContent = originalScore > 0 ? originalScore : 'N/A';
+    document.getElementById('modifiedMatchScore').textContent = modifiedScore > 0 ? modifiedScore : 'N/A';
+    
+    // Set improvement badge
+    const improvementElement = document.getElementById('improvement');
+    const improvementBadge = document.getElementById('improvementBadge');
+    
+    if (improvement > 0) {
+        improvementElement.textContent = '+' + improvement.toFixed(0);
+        improvementBadge.className = 'badge bg-success';
+        improvementBadge.innerHTML = '<i class="fas fa-arrow-up"></i> <span id="improvement">+' + improvement.toFixed(0) + '</span>%';
+    } else if (improvement < 0) {
+        improvementElement.textContent = improvement.toFixed(0);
+        improvementBadge.className = 'badge bg-warning';
+        improvementBadge.innerHTML = '<i class="fas fa-arrow-down"></i> <span id="improvement">' + improvement.toFixed(0) + '</span>%';
+    } else {
+        improvementElement.textContent = '0';
+        improvementBadge.className = 'badge bg-secondary';
+        improvementBadge.innerHTML = '<i class="fas fa-minus"></i> <span id="improvement">0</span>%';
+    }
     
     // Set changes summary
     const summaryDiv = document.getElementById('changesSummary');

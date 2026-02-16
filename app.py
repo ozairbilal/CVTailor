@@ -121,7 +121,9 @@ def process():
         sessions_data[session_id] = {
             'original_cv': cv_text,
             'modified_cv': result['modified_cv'],
-            'match_score': result['match_score'],
+            'original_match_score': result.get('original_match_score', 'N/A'),
+            'modified_match_score': result.get('modified_match_score', 'N/A'),
+            'match_score': result.get('modified_match_score', result.get('match_score', 'N/A')),
             'changes_summary': result['changes_summary'],
             'modified_filename': modified_filename,
             'original_filename': filename,
@@ -134,7 +136,9 @@ def process():
             'session_id': session_id,
             'original_cv': cv_text,
             'modified_cv': result['modified_cv'],
-            'match_score': result['match_score'],
+            'original_match_score': result.get('original_match_score', 'N/A'),
+            'modified_match_score': result.get('modified_match_score', 'N/A'),
+            'match_score': result.get('modified_match_score', result.get('match_score', 'N/A')),  # Fallback for compatibility
             'changes_summary': result['changes_summary'],
             'job_description': job_description[:500] + '...' if len(job_description) > 500 else job_description
         })
